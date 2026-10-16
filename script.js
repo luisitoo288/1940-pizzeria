@@ -386,5 +386,264 @@
     initMozzarellaCheese();
     initMenuFilters();
     initNavActiveState();
+    initCookieBanner();
+    initReservaForm();
   });
 })();
+
+/* ============================================================
+   7. COOKIE CONSENT BANNER
+      Registro trazable conforme a Ley 1581 de 2012 (Colombia)
+      Guarda en localStorage: decisión, timestamp, versión, userAgent
+   ============================================================ */
+(function () {
+  'use strict';
+
+  const CONSENT_KEY    = '1940_cookie_consent';
+  const CONSENT_VERSION = '1.0'; // actualizar si cambia la política de cookies
+  const CONSENT_TTL_MS  = 365 * 24 * 60 * 60 * 1000; // 12 meses
+
+  function initCookieBanner() {
+    const banner        = document.getElementById('cookie-banner');
+    const btnAccept     = document.getElementById('btn-cookie-accept');
+    const btnReject     = document.getElementById('btn-cookie-reject');
+    const btnManage     = document.getElementById('btn-gestionar-cookies');
+
+    if (!banner) return;
+
+    // ── ¿Ya existe consentimiento válido? ──────────────────────
+    const saved = getConsentRecord();
+    if (saved && saved.expires && Date.now() < saved.expires) {
+      // Consentimiento ya registrado y no expirado → no mostrar
+      return;
+    }
+
+    // Mostrar el banner
+    banner.removeAttribute('hidden');
+    banner.focus();
+
+    // ── Botones del banner ─────────────────────────────────────
+    if (btnAccept) {
+      btnAccept.addEventListener('click', () => {
+        saveConsentRecord('accepted');
+        hideBanner(banner);
+      });
+    }
+
+    if (btnReject) {
+      btnReject.addEventListener('click', () => {
+        saveConsentRecord('rejected');
+        hideBanner(banner);
+      });
+    }
+
+    // Botón "Gestionar Cookies" en el footer → reabre el banner
+    if (btnManage) {
+      btnManage.addEventListener('click', () => {
+        banner.removeAttribute('hidden');
+        banner.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        // Limpiar consentimiento previo para que el usuario pueda cambiar su decisión
+        try { localStorage.removeItem(CONSENT_KEY); } catch (_) {}
+      });
+    }
+  }
+
+  function hideBanner(banner) {
+    banner.setAttribute('hidden', '');
+  }
+
+  /**
+   * Guarda el registro de consentimiento en localStorage.
+   * Campos registrados (trazabilidad SIC):
+   *   - decision:    'accepted' | 'rejected'
+   *   - timestamp:   ISO 8601 (fecha y hora exacta de la decisión)
+   *   - version:     versión de la política de cookies vigente
+   *   - expires:     timestamp epoch de expiración (12 meses)
+   *   - userAgent:   tipo de dispositivo/navegador (sin PII directa)
+   *   - lang:        idioma del navegador
+   */
+  function saveConsentRecord(decision) {
+    const now = Date.now();
+    const record = {
+      decision:  decision,
+      timestamp: new Date(now).toISOString(),
+      version:   CONSENT_VERSION,
+      expires:   now + CONSENT_TTL_MS,
+      userAgent: navigator.userAgent ? navigator.userAgent.substring(0, 200) : 'unknown',
+      lang:      navigator.language || 'unknown',
+    };
+    try {
+      localStorage.setItem(CONSENT_KEY, JSON.stringify(record));
+    } catch (e) {
+      // localStorage no disponible (modo incógnito estricto, etc.)
+      console.warn('1940 Pizzeria: no se pudo guardar el registro de consentimiento:', e);
+    }
+  }
+
+  function getConsentRecord() {
+    try {
+      const raw = localStorage.getItem(CONSENT_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  // Exponer públicamente para que initCookieBanner() pueda llamarse desde el IIFE principal
+  window._1940initCookieBanner = initCookieBanner;
+
+  document.addEventListener('DOMContentLoaded', initCookieBanner);
+})();
+
+/* ============================================================
+   8. FORMULARIO DE RESERVA
+      Valida checkboxes legales (T&C + Privacidad) y abre
+      WhatsApp con los datos del formulario.
+      Genera registro local del consentimiento del formulario.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  const FORM_CONSENT_KEY = '1940_form_consents';
+
+  function initReservaForm() {
+    const form      = document.getElementById('form-reserva');
+    const feedback  = document.getElementById('form-reserva-feedback');
+    const submitBtn = document.getElementById('btn-reserva-submit');
+
+    if (!form) return;
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      // ── Limpiar feedback previo ──────────────────────────────
+      hideFeedback(feedback);
+
+      // ── Recoger valores ──────────────────────────────────────
+      const nombre    = form.querySelector('#reserva-nombre')?.value.trim()   || '';
+      const telefono  = form.querySelector('#reserva-telefono')?.value.trim() || '';
+      const fecha     = form.querySelector('#reserva-fecha')?.value            || '';
+      const personas  = form.querySelector('#reserva-personas')?.value         || '';
+      const mensaje   = form.querySelector('#reserva-mensaje')?.value.trim()  || '';
+      const chkTerminos   = form.querySelector('#check-terminos');
+      const chkPrivacidad = form.querySelector('#check-privacidad');
+
+      // ── Validaciones ─────────────────────────────────────────
+      const errors = [];
+
+      if (!nombre)   errors.push('Por favor ingresa tu nombre completo.');
+      if (!telefono) errors.push('Por favor ingresa tu número de WhatsApp o teléfono.');
+      if (!fecha)    errors.push('Por favor selecciona la fecha deseada para tu reserva.');
+      if (!personas) errors.push('Por favor selecciona el número de personas.');
+
+      if (!chkTerminos?.checked) {
+        errors.push('Debes aceptar los Términos y Condiciones para continuar.');
+        if (chkTerminos) chkTerminos.focus();
+      }
+
+      if (!chkPrivacidad?.checked) {
+        errors.push('Debes autorizar el tratamiento de tus datos personales para continuar.');
+        if (!chkTerminos?.checked && chkPrivacidad) chkPrivacidad.focus();
+      }
+
+      if (errors.length) {
+        showFeedback(feedback, errors.join(' '), 'error');
+        return;
+      }
+
+      // ── Registrar consentimiento del formulario ──────────────
+      // (trazabilidad: quién, cuándo, qué versión de política aceptó)
+      saveFormConsent({ nombre, telefono, fecha, personas });
+
+      // ── Construir mensaje de WhatsApp ────────────────────────
+      const fechaFormateada = fecha
+        ? new Date(fecha + 'T12:00:00').toLocaleDateString('es-CO', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+          })
+        : fecha;
+
+      const waMsg = [
+        '🍕 *Solicitud de Reserva — 1940 La Pizzeria*',
+        '',
+        `👤 *Nombre:* ${nombre}`,
+        `📅 *Fecha:* ${fechaFormateada}`,
+        `👥 *Personas:* ${personas}`,
+        `📱 *Teléfono:* ${telefono}`,
+        mensaje ? `💬 *Notas:* ${mensaje}` : null,
+        '',
+        '_He aceptado los Términos y Condiciones y la Política de Privacidad de 1940 La Pizzeria._',
+      ].filter(Boolean).join('\n');
+
+      const waNumber = '573000000000'; // ← reemplaza con el número real
+      const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(waMsg)}`;
+
+      // Mostrar feedback de éxito antes de abrir WA
+      showFeedback(
+        feedback,
+        '✅ ¡Listo! Abriendo WhatsApp para confirmar tu reserva...',
+        'success'
+      );
+
+      submitBtn.disabled = true;
+
+      setTimeout(() => {
+        window.open(waUrl, '_blank', 'noopener,noreferrer');
+        form.reset();
+        submitBtn.disabled = false;
+        setTimeout(() => hideFeedback(feedback), 4000);
+      }, 800);
+    });
+  }
+
+  /**
+   * Guarda un registro del consentimiento dado a través del formulario.
+   * Campos (trazabilidad para auditoría SIC):
+   *   - timestamp:        ISO 8601
+   *   - policyVersion:    versión de Política de Privacidad aceptada
+   *   - termsVersion:     versión de T&C aceptados
+   *   - formId:           identificador del formulario
+   *   - userAgent:        navegador/dispositivo
+   */
+  function saveFormConsent(userData) {
+    const record = {
+      timestamp:     new Date().toISOString(),
+      policyVersion: '1.0',
+      termsVersion:  '1.0',
+      formId:        'form-reserva',
+      // Guardamos solo iniciales del nombre + teléfono parcial para identificar la sesión
+      // sin almacenar datos completos de forma permanente en el cliente
+      refNombre:     userData.nombre ? userData.nombre.charAt(0) + '***' : '',
+      refFecha:      userData.fecha  || '',
+      userAgent:     navigator.userAgent ? navigator.userAgent.substring(0, 150) : 'unknown',
+      lang:          navigator.language || 'unknown',
+    };
+
+    try {
+      const existing = JSON.parse(localStorage.getItem(FORM_CONSENT_KEY) || '[]');
+      existing.push(record);
+      // Conservar solo los últimos 50 registros
+      const trimmed = existing.slice(-50);
+      localStorage.setItem(FORM_CONSENT_KEY, JSON.stringify(trimmed));
+    } catch (e) {
+      console.warn('1940 Pizzeria: no se pudo guardar el registro de consentimiento del formulario:', e);
+    }
+  }
+
+  function showFeedback(el, msg, type) {
+    if (!el) return;
+    el.textContent = msg;
+    el.className = `form-feedback ${type}`;
+    el.removeAttribute('hidden');
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function hideFeedback(el) {
+    if (!el) return;
+    el.setAttribute('hidden', '');
+    el.textContent = '';
+    el.className = 'form-feedback';
+  }
+
+  document.addEventListener('DOMContentLoaded', initReservaForm);
+})();
+

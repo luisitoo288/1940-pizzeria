@@ -970,6 +970,98 @@
                 </div>
               </div>
             </div>
+
+            <!-- ============ FORMULARIO DE RESERVA ============ -->
+            <form class="contact-form" id="form-reserva" novalidate>
+              <h3 class="contact-form-title">Solicitar una Reserva</h3>
+              <p class="contact-form-sub">Solo usaremos tus datos para gestionar tu reserva. Nunca los venderemos ni compartiremos con terceros con fines comerciales.</p>
+
+              <div class="contact-form-grid">
+                <div class="form-field">
+                  <label for="reserva-nombre" class="form-label">Nombre completo <span aria-hidden="true">*</span></label>
+                  <input type="text" id="reserva-nombre" name="nombre" class="form-input"
+                    placeholder="Tu nombre" required autocomplete="name"
+                    aria-required="true">
+                </div>
+
+                <div class="form-field">
+                  <label for="reserva-telefono" class="form-label">WhatsApp / Teléfono <span aria-hidden="true">*</span></label>
+                  <input type="tel" id="reserva-telefono" name="telefono" class="form-input"
+                    placeholder="+57 300 000 0000" required autocomplete="tel"
+                    aria-required="true">
+                </div>
+
+                <div class="form-field">
+                  <label for="reserva-fecha" class="form-label">Fecha deseada <span aria-hidden="true">*</span></label>
+                  <input type="date" id="reserva-fecha" name="fecha" class="form-input" required aria-required="true">
+                </div>
+
+                <div class="form-field">
+                  <label for="reserva-personas" class="form-label">Número de personas <span aria-hidden="true">*</span></label>
+                  <select id="reserva-personas" name="personas" class="form-input" required aria-required="true">
+                    <option value="">Selecciona</option>
+                    <option value="1">1 persona</option>
+                    <option value="2">2 personas</option>
+                    <option value="3-4">3 – 4 personas</option>
+                    <option value="5-6">5 – 6 personas</option>
+                    <option value="7+">7 o más</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-field form-field--full">
+                <label for="reserva-mensaje" class="form-label">Mensaje adicional (opcional)</label>
+                <textarea id="reserva-mensaje" name="mensaje" class="form-input form-textarea"
+                  placeholder="Cumpleaños, alergias, preferencias de mesa…" rows="3"
+                  maxlength="500" autocomplete="off"></textarea>
+              </div>
+
+              <!-- ===== CHECKBOXES LEGALES — OBLIGATORIOS ===== -->
+              <div class="form-legal-checks">
+
+                <!-- Checkbox 1: Términos y condiciones -->
+                <div class="form-check">
+                  <input type="checkbox" id="check-terminos" name="acepta_terminos"
+                    class="form-checkbox" required aria-required="true">
+                  <label for="check-terminos" class="form-check-label">
+                    He leído y acepto los
+                    <a href="terminos.html" target="_blank" rel="noopener noreferrer"
+                       class="form-check-link">Términos y Condiciones</a>
+                    de uso del Sitio.
+                    <span class="form-required-badge" aria-label="campo obligatorio">Obligatorio</span>
+                  </label>
+                </div>
+
+                <!-- Checkbox 2: Política de privacidad -->
+                <div class="form-check">
+                  <input type="checkbox" id="check-privacidad" name="acepta_privacidad"
+                    class="form-checkbox" required aria-required="true">
+                  <label for="check-privacidad" class="form-check-label">
+                    Autorizo el tratamiento de mis datos personales conforme a la
+                    <a href="privacidad.html" target="_blank" rel="noopener noreferrer"
+                       class="form-check-link">Política de Privacidad</a>
+                    de 1940 La Pizzeria (Ley 1581 de 2012).
+                    <span class="form-required-badge" aria-label="campo obligatorio">Obligatorio</span>
+                  </label>
+                </div>
+
+              </div><!-- /form-legal-checks -->
+
+              <div id="form-reserva-feedback" class="form-feedback" role="alert" aria-live="polite" hidden></div>
+
+              <button type="submit" class="form-submit" id="btn-reserva-submit">
+                <span class="material-symbols-outlined" aria-hidden="true">send</span>
+                Solicitar reserva por WhatsApp
+              </button>
+
+              <p class="form-privacy-note">
+                <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle;">lock</span>
+                Tus datos se usan únicamente para gestionar tu reserva. Consulta nuestra
+                <a href="privacidad.html" target="_blank" rel="noopener noreferrer">Política de Privacidad</a>
+                y <a href="cookies.html" target="_blank" rel="noopener noreferrer">Política de Cookies</a>.
+              </p>
+            </form>
+
           </div>
         </section>
 
@@ -981,19 +1073,67 @@
        FOOTER
        ============================================================ -->
   <footer>
-    <div class="w-full px-gutter-mobile md:px-margin py-space-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-space-lg">
-      <div class="flex flex-col gap-space-xs">
-        <span class="font-headline-sm text-headline-sm tracking-tight text-on-surface">1940 LA PIZZERIA</span>
-        <span class="font-body-md text-body-md text-on-surface-variant">Centro Histórico, Cartagena de Indias • Ricetta Napoletana Artigianale</span>
+    <div class="w-full px-gutter-mobile md:px-margin py-space-xl flex flex-col gap-space-md">
+      <!-- Fila principal -->
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-space-lg">
+        <div class="flex flex-col gap-space-xs">
+          <span class="font-headline-sm text-headline-sm tracking-tight text-on-surface">1940 LA PIZZERIA</span>
+          <span class="font-body-md text-body-md text-on-surface-variant">Centro Histórico, Cartagena de Indias • Ricetta Napoletana Artigianale</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-space-lg">
+          <span class="font-label-md text-label-md uppercase tracking-widest text-primary">#DeOtroPlaneta</span>
+          <a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors uppercase tracking-widest"
+             href="https://www.lapizzeria1940.com" target="_blank" rel="noopener noreferrer">WWW.LAPIZZERIA1940.COM</a>
+        </div>
       </div>
-      <div class="flex flex-wrap items-center gap-space-lg">
-        <span class="font-label-md text-label-md uppercase tracking-widest text-primary">#DeOtroPlaneta</span>
-        <a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors uppercase tracking-widest"
-           href="https://www.lapizzeria1940.com" target="_blank" rel="noopener noreferrer">WWW.LAPIZZERIA1940.COM</a>
-        <span class="font-label-sm text-label-sm text-outline">© 1940 LA PIZZERIA CARTAGENA.</span>
+
+      <!-- Fila legal -->
+      <div class="footer-legal-row">
+        <span class="font-label-sm text-label-sm text-outline">© 2025 1940 La Pizzeria Cartagena. Todos los derechos reservados.</span>
+        <nav class="footer-legal-links" aria-label="Documentos legales">
+          <a href="terminos.html" class="footer-legal-link" id="footer-link-terminos">Términos y Condiciones</a>
+          <span class="footer-legal-sep" aria-hidden="true">·</span>
+          <a href="privacidad.html" class="footer-legal-link" id="footer-link-privacidad">Política de Privacidad</a>
+          <span class="footer-legal-sep" aria-hidden="true">·</span>
+          <a href="cookies.html" class="footer-legal-link" id="footer-link-cookies">Política de Cookies</a>
+          <span class="footer-legal-sep" aria-hidden="true">·</span>
+          <button class="footer-legal-link footer-legal-btn" id="btn-gestionar-cookies"
+            aria-label="Gestionar mis preferencias de cookies">
+            Gestionar Cookies
+          </button>
+        </nav>
       </div>
+
     </div>
   </footer>
+
+  <!-- ============================================================
+       BANNER DE CONSENTIMIENTO DE COOKIES
+       (mostrado solo la primera vez o al revocar el consentimiento)
+       ============================================================ -->
+  <div id="cookie-banner" class="cookie-banner" role="dialog" aria-modal="true"
+       aria-labelledby="cookie-banner-title" aria-describedby="cookie-banner-desc" hidden>
+    <div class="cookie-banner-inner">
+      <div class="cookie-banner-text">
+        <p class="cookie-banner-title" id="cookie-banner-title">
+          <span class="material-symbols-outlined" aria-hidden="true">cookie</span>
+          Este sitio usa cookies técnicas
+        </p>
+        <p class="cookie-banner-desc" id="cookie-banner-desc">
+          Usamos cookies estrictamente necesarias para el funcionamiento del sitio y recursos de terceros
+          (Google Fonts, Tailwind CDN) que transfieren tu dirección IP a sus servidores.
+          No usamos cookies de publicidad ni analítica. Consulta nuestra
+          <a href="cookies.html" class="cookie-link" target="_blank" rel="noopener noreferrer">Política de Cookies</a>
+          y
+          <a href="privacidad.html" class="cookie-link" target="_blank" rel="noopener noreferrer">Política de Privacidad</a>.
+        </p>
+      </div>
+      <div class="cookie-banner-actions">
+        <button id="btn-cookie-reject" class="cookie-btn cookie-btn--secondary">Solo esenciales</button>
+        <button id="btn-cookie-accept" class="cookie-btn cookie-btn--primary">Entendido, acepto</button>
+      </div>
+    </div>
+  </div>
 
   <!-- App Script -->
   <script src="script.js"></script>
