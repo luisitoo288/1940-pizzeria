@@ -1,0 +1,417 @@
+/* ============================================================
+   1940 LA PIZZERIA — styles.css
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+/* ---------- Reset & Base ---------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overscroll-behavior: none;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: #131313;
+  color: #e5e2e1;
+  font-size: 13px;
+  line-height: 20px;
+  letter-spacing: 0.01em;
+}
+
+/* ---------- Hide default scrollbar ---------- */
+::-webkit-scrollbar { display: none; }
+* { scrollbar-width: none; -ms-overflow-style: none; }
+
+/* ============================================================
+   LAYOUT: App shell con sidebar solo en desktop
+   ============================================================ */
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+  padding-top: 80px; /* header height */
+}
+
+/* ---------- SIDEBAR (desktop-only) ---------- */
+.sidebar {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: fixed;
+    top: 80px;
+    left: 0;
+    width: 80px;
+    height: calc(100vh - 80px);
+    background: #0e0e0e;
+    border-right: 1px solid #504535;
+    z-index: 40;
+    padding: 1.5rem 0;
+    gap: 0.75rem;
+    overflow: hidden;
+  }
+
+  .main-content {
+    margin-left: 80px;
+    width: calc(100% - 80px);
+  }
+}
+
+/* ---------- Sidebar nav links ---------- */
+.sidebar-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  text-decoration: none;
+  color: #9d8f7c;
+  width: 64px;
+  text-align: center;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+.sidebar-link:hover,
+.sidebar-link.active {
+  background: #20201f;
+  color: #ffc664;
+}
+
+.sidebar-link .material-symbols-outlined {
+  font-size: 20px;
+  transition: transform 0.2s;
+}
+
+.sidebar-link:hover .material-symbols-outlined {
+  transform: scale(1.15);
+}
+
+/* ---------- Mozzarella Canvas ---------- */
+#mozzarella-canvas {
+  display: block;
+  width: 64px;
+  height: 120px;
+  margin: auto;
+  cursor: grab;
+}
+
+#mozzarella-canvas:active { cursor: grabbing; }
+
+.sidebar-cheese-label {
+  font-size: 7px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #504535;
+  text-align: center;
+  margin-top: -4px;
+}
+
+/* ============================================================
+   SECTION TRANSITION ANIMATION (scroll-reveal)
+   ============================================================ */
+.section-reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.section-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered children */
+.section-reveal.delay-1 { transition-delay: 0.05s; }
+.section-reveal.delay-2 { transition-delay: 0.1s; }
+.section-reveal.delay-3 { transition-delay: 0.15s; }
+
+/* ============================================================
+   SOCIAL SECTION
+   ============================================================ */
+.social-section {
+  width: 100%;
+  background: #1b1b1b;
+  border-top: 1px solid #504535;
+  padding: 3rem 1.5rem;
+}
+
+.social-section-title {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 28px;
+  letter-spacing: -0.01em;
+  color: #e5e2e1;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.social-section-sub {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #9d8f7c;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.social-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.social-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem 2.5rem;
+  border-radius: 16px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.25s ease,
+              background 0.2s;
+  min-width: 160px;
+  flex: 1;
+  max-width: 220px;
+}
+
+.social-card:hover {
+  transform: translateY(-6px) scale(1.03);
+}
+
+/* Instagram */
+.social-card--ig {
+  background: linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%);
+  box-shadow: 0 8px 32px rgba(131, 58, 180, 0.3);
+  color: #fff;
+}
+
+.social-card--ig:hover {
+  box-shadow: 0 16px 48px rgba(131, 58, 180, 0.5);
+}
+
+/* TikTok */
+.social-card--tiktok {
+  background: linear-gradient(135deg, #010101 0%, #1a1a2e 50%, #16213e 100%);
+  border: 1px solid #2a2a3e;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.social-card--tiktok::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(105,201,208,0.15), rgba(254,44,85,0.15));
+  pointer-events: none;
+}
+
+.social-card--tiktok:hover {
+  box-shadow: 0 16px 48px rgba(254, 44, 85, 0.3);
+}
+
+.social-card-icon {
+  font-size: 40px;
+  line-height: 1;
+}
+
+/* Custom TikTok icon SVG */
+.tiktok-icon {
+  width: 40px;
+  height: 40px;
+}
+
+.social-card-name {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.social-card-handle {
+  font-size: 11px;
+  font-weight: 500;
+  opacity: 0.8;
+  letter-spacing: 0.05em;
+}
+
+/* ============================================================
+   CONTACT SECTION
+   ============================================================ */
+.contact-section {
+  width: 100%;
+  background: #131313;
+  border-top: 1px solid #504535;
+  padding: 3rem 1.5rem;
+}
+
+.contact-inner {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.contact-title {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #e5e2e1;
+  margin-bottom: 0.35rem;
+  text-align: center;
+}
+
+.contact-sub {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #9d8f7c;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.contact-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .contact-cards { grid-template-columns: 1fr 1fr; }
+}
+
+.contact-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: #20201f;
+  border: 1px solid #353535;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #e5e2e1;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.contact-card:hover {
+  background: #2a2a2a;
+  border-color: #ffc664;
+  transform: translateY(-2px);
+}
+
+.contact-card-icon {
+  font-size: 28px;
+  color: #ffc664;
+  flex-shrink: 0;
+}
+
+.contact-card-info strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #e5e2e1;
+  margin-bottom: 2px;
+}
+
+.contact-card-info span {
+  font-size: 12px;
+  color: #9d8f7c;
+}
+
+/* WhatsApp button accent */
+.contact-card--wa { border-color: #25d366; }
+.contact-card--wa .contact-card-icon { color: #25d366; }
+.contact-card--wa:hover { border-color: #25d366; background: rgba(37, 211, 102, 0.08); }
+
+/* Location */
+.contact-card--loc .contact-card-icon { color: #ffc664; }
+
+/* Email */
+.contact-card--email .contact-card-icon { color: #aed2ff; }
+
+/* Hours */
+.contact-card--hours .contact-card-icon { color: #ffb4a7; }
+
+/* ============================================================
+   SMOOTH SCROLL ANCHOR OFFSET (for fixed header + sidebar)
+   ============================================================ */
+section[id] {
+  scroll-margin-top: 96px;
+}
+
+/* ============================================================
+   MOZZARELLA DRIP ANIMATION (sidebar decorative)
+   ============================================================ */
+@keyframes cheese-drip {
+  0%   { transform: translateY(0) scaleY(1); }
+  40%  { transform: translateY(6px) scaleY(1.08); }
+  70%  { transform: translateY(3px) scaleY(0.96); }
+  100% { transform: translateY(0) scaleY(1); }
+}
+
+@keyframes cheese-wobble {
+  0%, 100% { border-radius: 50% 50% 55% 45% / 50% 50% 60% 40%; }
+  25%       { border-radius: 55% 45% 50% 50% / 45% 55% 50% 50%; }
+  50%       { border-radius: 45% 55% 45% 55% / 55% 45% 55% 45%; }
+  75%       { border-radius: 50% 50% 55% 45% / 55% 45% 50% 50%; }
+}
+
+/* ============================================================
+   FILTER BUTTONS
+   ============================================================ */
+.filter-btn {
+  white-space: nowrap;
+  border: none;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.filter-btn.active-filter {
+  background: #e5e2e1 !important;
+  color: #131313 !important;
+}
+
+/* ============================================================
+   MENU ITEM HOVER
+   ============================================================ */
+.menu-item { transition: background 0.15s; }
+
+/* ============================================================
+   REVIEW CARDS
+   ============================================================ */
+.review-card {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.review-card:hover { transform: translateY(-4px); }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer {
+  background: #0e0e0e;
+  border-top: 1px solid #504535;
+}
